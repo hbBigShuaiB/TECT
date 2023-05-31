@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+import argparse
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.split(sys.argv[0])[0], '../'))
+
+from TECT.builder import Builder
+from datetime import datetime
+
+def get_parser():
+    desc = 'Construct the TE Library index based on the interval Tree.'
+    exmp = 'Example: TECT_build -a te_annotation.out -g exon.gff3 -o human.index/'
+    parser = argparse.ArgumentParser(prog='TECT_build', description=desc, epilog=exmp)
+
+    required = parser.add_argument_group('required arguments')
+
+    required.add_argument('-a', '--annotation', type=str, required=True,
+                          help='Give the path of TE annotation file.')
+    required.add_argument('-g', '--gff', type=str, required=True,
+                          help='Give the path of gff file. Help to determine whether a gene is on the exon or not.')
+    required.add_argument('-o', '--output', type=str, default='index/',
+                          help='Prefix path of the output file.')
+    return parser
+
+
+def main():
+    start_time=datetime.now()
+
+    args = get_parser().parse_args()
+
+    builder = Builder(args.annotation, args.gff, args.output)
+
+    end_time=datetime.now()
+    print('')
+    print('[%s] End of the TECT_build module.'%(end_time.strftime('%Y-%m-%d %H:%M:%S')))
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.stderr.write("User interrupt !\n")
+        sys.exit(0)
